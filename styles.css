@@ -82,7 +82,6 @@ footer {
     position: fixed;
     width: 100%;
     bottom: 0;
-    height: 20px;
 }
 #question-counter {
     font-size: 1.2em;
@@ -104,7 +103,11 @@ footer {
     margin: 10px 0;
     border-radius: 5px;
 }
-
+#question-counter {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    color: rgb(236, 223, 204);
+}
 #result {
     text-align: center;
     background-color: rgb(60, 61, 55);
@@ -115,3 +118,4 @@ footer {
     margin-top: 20px;
     display: none; /* Initially hidden */
 }
+

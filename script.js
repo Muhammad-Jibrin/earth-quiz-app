@@ -472,23 +472,6 @@ const submitBtn = document.getElementById('submit-btn');
 const resultEl = document.getElementById('result');
 const questionCounterEl = document.getElementById('question-counter');
 
-function handleAnswer(selectedAnswer) {
-    const correctAnswer = quizData[currentQuestionIndex].correct;
-    if (selectedAnswer === correctAnswer) {
-        score++;
-        document.querySelector(`li[data-answer="${selectedAnswer}"]`).classList.add('correct');
-    } else {
-        document.querySelector(`li[data-answer="${selectedAnswer}"]`).classList.add('incorrect');
-        document.querySelector(`li[data-answer="${correctAnswer}"]`).classList.add('correct');
-    }
-    userAnswers.push({
-        question: quizData[currentQuestionIndex].question,
-        selected: selectedAnswer,
-        correct: correctAnswer
-    });
-}
-
-
 function loadQuestion() {
     const currentQuizData = quizData[currentQuestionIndex];
     questionEl.innerText = currentQuizData.question;
@@ -516,36 +499,45 @@ function checkAnswer(selectedAnswer) {
     }
 }
 
+function handleAnswer(selectedAnswer) {
+    const correctAnswer = quizData[currentQuestionIndex].correct;
+    if (selectedAnswer === correctAnswer) {
+        score++;
+        document.querySelector(`li[data-answer="${selectedAnswer}"]`).classList.add('correct');
+    } else {
+        document.querySelector(`li[data-answer="${selectedAnswer}"]`).classList.add('incorrect');
+        document.querySelector(`li[data-answer="${correctAnswer}"]`).classList.add('correct');
+    }
+    userAnswers.push({
+        question: quizData[currentQuestionIndex].question,
+        selected: selectedAnswer,
+        correct: correctAnswer
+    });
+}
+
 function displayResults() {
     let resultHtml = `<h3>Quiz Completed!</h3>`;
     resultHtml += `<p>You scored ${score}/${quizData.length}.</p>`;
     resultHtml += `<h4>Your Answers:</h4>`;
     resultHtml += `<ul>`;
-    
     userAnswers.forEach(answer => {
-        const correctAnswer = quizData.find(q => q.question === answer.question)[answer.correct];
-        const userAnswer = quizData.find(q => q.question === answer.question)[answer.selected];
-
         const resultClass = answer.selected === answer.correct ? 'correct' : 'incorrect';
-        
         resultHtml += `
             <li class="${resultClass}">
                 <strong>${answer.question}</strong><br>
-                Your answer: ${userAnswer}<br>
-                Correct answer: ${correctAnswer}
+                Your answer: ${quizData.find(q => q.question === answer.question)[answer.selected]}<br>
+                Correct answer: ${quizData.find(q => q.question === answer.question)[answer.correct]}
             </li>
         `;
     });
-    
     resultHtml += `</ul>`;
     resultEl.innerHTML = resultHtml;
-
-    // Hide quiz content and show results
+    resultEl.style.display = 'block'; // Show results
+    // Hide quiz content
     questionEl.style.display = 'none';
     optionsEl.style.display = 'none';
     submitBtn.style.display = 'none';
 }
-
 
 optionsEl.addEventListener('click', (e) => {
     if (e.target.tagName === 'LI') {
@@ -555,18 +547,20 @@ optionsEl.addEventListener('click', (e) => {
         if (currentQuestionIndex < quizData.length) {
             setTimeout(() => {
                 loadQuestion();
-            }, 300); // Short delay to show feedback
+            }, 100); // Short delay to show feedback
         } else {
             setTimeout(() => {
                 displayResults();
-            }, 300); // Short delay to show feedback
+            }, 100); // Short delay to show feedback
         }
     }
 });
 
 submitBtn.addEventListener('click', () => {
-    const confirmation = confirm("You have to complete answering the questions before viewing result");
-    if (confirmation) {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < quizData.length) {
+        loadQuestion();
+    } else {
         displayResults();
     }
 });
